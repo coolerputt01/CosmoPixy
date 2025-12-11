@@ -1,5 +1,6 @@
 <template>
   <main class="h-screen bg-gray-100">
+    <InitialModal/>
     <div class="flex h-full">
       <!-- Sidebar -->
       <nav class="w-64 text-black flex flex-col p-4">
@@ -7,32 +8,36 @@
           <li>
             <RouterLink
               to="/dashboard"
-              class="block py-2 px-4 rounded hover:bg-blue-500 transition-colors"
+              class="cursor-pointer flex gap-2 py-2 px-4 rounded hover:bg-gray-300 transition-colors"
             >
+              <RiHomeLine />
               Dashboard
             </RouterLink>
           </li>
           <li>
             <RouterLink
               to="/worlds"
-              class="block py-2 px-4 rounded hover:bg-blue-500 transition-colors"
+              class="cursor-pointer flex gap-2 py-2 px-4 rounded hover:bg-gray-300 transition-colors"
             >
+              <PiIslandDuotone />
               Worlds
             </RouterLink>
           </li>
           <li>
             <RouterLink
               to="/draw"
-              class="block py-2 px-4 rounded hover:bg-blue-500 transition-colors"
+              class="cursor-pointer flex gap-2 py-2 px-4 rounded hover:bg-gray-300 transition-colors"
             >
+              <TbBrush />
               Draw
             </RouterLink>
           </li>
           <li>
             <RouterLink
               to="/collection"
-              class="block py-2 px-4 rounded hover:bg-blue-500 transition-colors"
+              class="cursor-pointer flex gap-2 py-2 px-4 rounded hover:bg-gray-300 transition-colors"
             >
+              <BiCollection />
               Collection
             </RouterLink>
           </li>
@@ -55,4 +60,19 @@
 
 <script setup lang="ts">
 import { RouterLink } from 'vue-router';
+import InitialModal from '@/components/InitialModal.vue';
+import { RiHomeLine } from 'vue-icons-plus/ri';
+import { PiIslandDuotone } from 'vue-icons-plus/pi';
+import { TbBrush } from 'vue-icons-plus/tb';
+import { BiCollection } from 'vue-icons-plus/bi';
 </script>
+
+<style scoped>
+.icon {
+  width: 2em;
+  height: 2em;
+}
+.cursor-pointer {
+  cursor: pointer !important;
+}
+</style>
