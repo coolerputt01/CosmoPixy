@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import index from '../pages/index.vue';
 import dashboard from '../pages/dashboard.vue';
+import draw from '../pages/draw.vue';
 
 
 const routes = [
@@ -9,6 +10,9 @@ const routes = [
     },
     {
       path: '/dashboard',component: dashboard,
+    },
+    {
+      path: '/draw',component: draw,
     }
   ];
 const router = createRouter({
