@@ -1,6 +1,8 @@
 let canvas : HTMLCanvasElement;
 let ctx : CanvasRenderingContext2D;
 
+let currentColor : string;
+
 const tileSize : number =   16;
 let isDrawingClickAndDrag : boolean = false;
 let lastTileX: number | null;
@@ -12,8 +14,6 @@ function initPad(){
 
     canvas.width = 32 * tileSize;
     canvas.height = 32 * tileSize;
-    ctx.fillStyle = "#000000";
-    ctx.fillRect(0,0,canvas.width,canvas.height);
     canvas.addEventListener("click",handleClick);
     canvas.addEventListener("mousedown",(e :MouseEvent)=>{
         isDrawingClickAndDrag = true;
@@ -86,7 +86,7 @@ function handleClick( e : MouseEvent | TouchEvent){
 		let clientY = Math.floor((e.clientY - canvasRect.top) / tileSize) * tileSize;
 
 
-        ctx.fillStyle = 'red';
+        ctx.fillStyle = currentColor;
         ctx.fillRect(clientX, clientY, tileSize, tileSize);
     }else{
         let t = e.touches[0];
@@ -98,7 +98,7 @@ function handleClick( e : MouseEvent | TouchEvent){
 }
 
 function drawTile(x: number,y:number){
-    ctx.fillStyle = "red";
+    ctx.fillStyle = currentColor;
     ctx.fillRect(x*tileSize,y*tileSize,tileSize,tileSize);
 }
 
@@ -106,4 +106,15 @@ function loop(){
     //ctx.clearRect(0, 0, canvas.width, canvas.height);
     requestAnimationFrame(loop);
 }
-export { initPad ,loop };
+function setColor(color: string){
+    currentColor = color;
+}
+
+function lazyDownload(){
+    const imageDataUrl = canvas.toDataURL("image/png");
+    const link = document.createElement("a");
+    link.href = imageDataUrl;
+    link.download = "my-drawing.png";
+    link.click();
+}
+export { initPad ,loop ,setColor,lazyDownload};

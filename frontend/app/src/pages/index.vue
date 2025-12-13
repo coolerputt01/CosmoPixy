@@ -3,7 +3,7 @@
     import { init } from '../utils/world.js';
 
     onMounted(()=>{
-        init('./tiles/grass.png');
+        init('./tiles/tiles.png');
     });
 
 </script>
