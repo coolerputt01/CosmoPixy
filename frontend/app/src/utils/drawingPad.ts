@@ -3,6 +3,8 @@ let ctx : CanvasRenderingContext2D;
 
 const tileSize : number =   16;
 let isDrawingClickAndDrag : boolean = false;
+let lastTileX: number | null;
+let lastTileY : number | null;
 
 function initPad(){
     canvas = document.querySelector('canvas') as HTMLCanvasElement;
@@ -13,17 +15,68 @@ function initPad(){
     ctx.fillStyle = "#000000";
     ctx.fillRect(0,0,canvas.width,canvas.height);
     canvas.addEventListener("click",handleClick);
-    canvas.addEventListener("touchstart",()=>{
+    canvas.addEventListener("mousedown",(e :MouseEvent)=>{
         isDrawingClickAndDrag = true;
+
+        const { x, y } = getTilePos(e);
+        lastTileX = x;
+        lastTileY = y;
+
+        drawTile(x, y);
     });
-    canvas.addEventListener("touchmove",(e: TouchEvent)=>{
-        if(isDrawingClickAndDrag){
-            handleClick(e);
+    canvas.addEventListener("mousemove",(e: MouseEvent)=>{
+        if(!isDrawingClickAndDrag) return;
+
+        const { x, y } = getTilePos(e);
+
+        if (lastTileX !== null && lastTileY !== null) {
+            dragAndDrawLine(lastTileX, lastTileY, x, y);
         }
-    });
-    canvas.addEventListener("touchend",()=>{
+
+        lastTileX = x;
+        lastTileY = y;
+    },{ passive: false });
+    canvas.addEventListener("mouseup",()=>{
         isDrawingClickAndDrag = false;
+        lastTileX = null;
+        lastTileY = null;
     });
+    canvas.addEventListener("mouseleave", () => {
+        isDrawingClickAndDrag = false
+    });
+}
+
+function getTilePos(e: MouseEvent) {
+    const rect = canvas.getBoundingClientRect();
+
+    const x = Math.floor((e.clientX - rect.left) / tileSize);
+    const y = Math.floor((e.clientY - rect.top) / tileSize);
+
+    return { x, y };
+}
+
+function dragAndDrawLine(x1 : number,y1: number,x2 : number, y2: number){
+    let rx: number = Math.abs(x2-x1);
+    let ry: number = Math.abs(y2-y1);
+
+    let dx : number = x2 > x1 ? 1: -1;
+    let dy : number = y2 > y1 ? 1: -1;
+
+    let dcxv : number = rx-ry;
+
+    while(true){
+        drawTile(x1,y1);
+        if (x1 === x2 && y1 === y2) break;
+        let e2 = dcxv * 2;
+        if(e2 > -ry){
+            dcxv -= ry;
+            x1 += dx;
+        }if(e2 < rx){
+            dcxv += rx;
+            y1 += dy;
+        }
+    }
+
 }
 
 function handleClick( e : MouseEvent | TouchEvent){
@@ -38,11 +91,15 @@ function handleClick( e : MouseEvent | TouchEvent){
     }else{
         let t = e.touches[0];
         let clientX = Math.floor((t!.clientX - canvasRect.left)/tileSize) * tileSize;
-		let clientY = Math.floor((t!.clientY - canvasRect.right)/tileSize) * tileSize;
+		let clientY = Math.floor((t!.clientY - canvasRect.top)/tileSize) * tileSize;
 
-        ctx.fillStyle = "red";
-        ctx.fillRect(clientX,clientY,tileSize,tileSize);
+        
     }
+}
+
+function drawTile(x: number,y:number){
+    ctx.fillStyle = "red";
+    ctx.fillRect(x*tileSize,y*tileSize,tileSize,tileSize);
 }
 
 function loop(){
