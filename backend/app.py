@@ -1,19 +1,22 @@
 from flask import Flask, request, jsonify
-from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
-from flask_bcrypt import Bcrypt
-from config import initConfigs,db
+from flask_jwt_extended import JWTManager
+from .config import initConfigs,db
+from .auth.auth import auth_bp,bcrypt
+bcrypt.init_app(app)
 
 app = Flask(__name__)
 
 initConfigs(app)
 db.init_app(app)
+jwt = JWTManager(app);
 
-
+app.register_blueprint(auth_bp, url_prefix="/auth")
 @app.route('/',methods=["GET"])
 def home():
     return jsonify(
         {"msg":"Welcome to ComsoPixy"}
     ),200
+
 
 with app.app_context():
     db.create_all()

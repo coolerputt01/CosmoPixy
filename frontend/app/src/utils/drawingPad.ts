@@ -111,10 +111,18 @@ function setColor(color: string){
 }
 
 function lazyDownload(){
-    const imageDataUrl = canvas.toDataURL("image/png");
+    const exportCanvas : HTMLCanvasElement = document.createElement('canvas');
+    exportCanvas!.width = 32;
+    exportCanvas!.height = 32;
+
+    const exportContext : CanvasRenderingContext2D = exportCanvas!.getContext('2d')!;
+    exportContext.imageSmoothingEnabled = false;
+    exportContext.drawImage(canvas,0,0,32,32);
+
+    const imageDataUrl = exportCanvas.toDataURL("image/png");
     const link = document.createElement("a");
     link.href = imageDataUrl;
-    link.download = "my-drawing.png";
+    link.download = `tile-${Math.round(Math.random() * 100)}.png`;
     link.click();
 }
 export { initPad ,loop ,setColor,lazyDownload};
