@@ -9,7 +9,7 @@ bcrypt = Bcrypt()
 
 @auth_bp.route("/signup",methods=["POST"])
 def signup():
-    data = request.json
+    data = request.get_json()
 
     if not data:
         return jsonify({"msg": "Missing JSON body in request"}), 400
@@ -36,3 +36,25 @@ def signup():
     db.session.commit()
 
     return jsonify({"msg":"User was successfully created"}),201
+
+@auth_bp.route("/signin",methods=["POST"])
+def signin():
+    data = request.get_json()
+
+    if not data:
+        return jsonify({"msg": "Missing JSON body in request"}), 400
+
+    email, password = (
+        data.get("email"),
+        data.get("password"),
+    )
+    if not email or not password:
+        return jsonify({"msg": "All fields are required"}), 400
+
+    user = User.query.filter_by(email=email).first()
+
+    if not user or not bcrypt.check_password_hash(user.password, password):
+        return jsonify({"msg": "Invalid credentials"}), 401
+
+    access_token = create_access_token(identity=user.id)
+    return jsonify({"pixel_virus":access_token})
