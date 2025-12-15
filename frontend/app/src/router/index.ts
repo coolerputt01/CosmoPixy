@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import index from '../pages/index.vue';
 import dashboard from '../pages/dashboard.vue';
 import draw from '../pages/draw.vue';
-
+import signup from '../pages/signup.vue';
 
 const routes = [
     {
@@ -13,7 +13,10 @@ const routes = [
     },
     {
       path: '/draw',component: draw,
-    }
+    },
+    {
+      path: '/signup',component: signup,
+    },
   ];
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
