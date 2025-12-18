@@ -1,72 +1,83 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-white text-gray-900">
-    <!-- Card -->
-    <div class="relative w-full max-w-md p-8 rounded-3xl bg-white backdrop-blur-xl shadow-2xl border border-gray-200">
-      <!-- Glow -->
-      <div class="absolute -inset-1 rounded-3xl bg-gradient-to-r from-blue-500/40 to-blue-500 opacity-30 blur"></div>
+  <main class="w-full min-h-screen flex items-center justify-center bg-gray-100">
+    <div class="stage flex flex-col gap-4 w-full max-w-sm p-6">
 
-      <div class="relative">
-        <!-- Logo / Title -->
-        <div class="text-center mb-6">
-          <h1 class="text-4xl font-extrabold tracking-widest text-gray-900">COSMOPIXY</h1>
-          <p class="mt-2 text-sm text-gray-600">Create your pixel explorer</p>
-        </div>
+      <h2 class="text-xl font-bold text-center">
+        {{ stepTitle }}
+      </h2>
 
-        <!-- Progress Bar (gamified feel) -->
-        <div class="mb-6">
-          <div class="flex justify-between text-xs text-gray-600 mb-1">
-            <span>Signup Progress</span>
-            <span>1 / 3</span>
-          </div>
-          <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-            <div class="h-full w-1/3 bg-gradient-to-r from-white to-blue-500"></div>
-          </div>
-        </div>
+      <input
+        :type="inputType"
+        :placeholder="placeholder"
+        v-model="form[currentField]"
+        class="border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
+      />
 
-        <!-- Form -->
-        <form class="space-y-4">
-          <div>
-            <label class="text-xs text-gray-600">Username</label>
-            <input
-              type="text"
-              placeholder="PixelHero"
-              class="w-full mt-1 px-4 py-3 rounded-xl bg-gray-100 border border-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
+      <button
+        class="bg-blue-500 rounded-full text-white py-3 font-bold hover:opacity-80 transition"
+        @click="nextStep"
+      >
+        {{ buttonText }}
+      </button>
 
-          <div>
-            <label class="text-xs text-gray-600">Email</label>
-            <input
-              type="email"
-              placeholder="hero@cosmopixy.io"
-              class="w-full mt-1 px-4 py-3 rounded-xl bg-gray-100 border border-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          <div>
-            <label class="text-xs text-gray-600">Password</label>
-            <input
-              type="password"
-              placeholder="••••••••"
-              class="w-full mt-1 px-4 py-3 rounded-xl bg-gray-100 border border-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          <!-- CTA -->
-          <button
-            type="submit"
-            class="group w-full mt-6 py-3 rounded-xl bg-blue-500 hover:bg-blue-600 transition-all duration-300 font-bold tracking-wide shadow-lg shadow-blue-500/40"
-          >
-            <span class="group-hover:tracking-widest transition-all">START ADVENTURE</span>
-          </button>
-        </form>
-
-        <!-- Footer -->
-        <p class="mt-6 text-center text-xs text-gray-500">
+      <div class="text-center mt-10">
+        <p>
           Already have an account?
-          <span class="text-blue-500 hover:underline cursor-pointer">Login</span>
+          Sign in
+          <RouterLink to="/signin" class="underline text-blue-800">here</RouterLink>
         </p>
       </div>
+
     </div>
-  </div>
+  </main>
 </template>
+
+<script setup>
+import { RouterLink } from "vue-router";
+import { ref, computed } from "vue"
+
+const step = ref(0)
+
+const form = ref({
+  username: "",
+  email: "",
+  password: ""
+})
+
+const steps = ["username", "email", "password"]
+
+const currentField = computed(() => steps[step.value])
+
+const placeholder = computed(() => {
+  if (step.value === 0) return "Username"
+  if (step.value === 1) return "Email"
+  return "Password"
+})
+
+const inputType = computed(() => {
+  if (step.value === 2) return "password"
+  if (step.value === 1) return "email"
+  return "text"
+})
+
+const stepTitle = computed(() => {
+  if (step.value === 0) return "Choose a Username"
+  if (step.value === 1) return "Enter your E-mail"
+  return "Create a Password"
+})
+
+const buttonText = computed(() =>
+  step.value === steps.length - 1 ? "Finish" : "Next"
+)
+
+function nextStep() {
+  if (!form.value[currentField.value]) return
+
+  if (step.value < steps.length - 1) {
+    step.value++
+  } else {
+    console.log("Form complete:", form.value)
+    // submit to backend here
+  }
+}
+</script>

@@ -3,6 +3,8 @@ import index from '../pages/index.vue';
 import dashboard from '../pages/dashboard.vue';
 import draw from '../pages/draw.vue';
 import signup from '../pages/signup.vue';
+import signin from '../pages/signin.vue';
+import { SiGin } from 'vue-icons-plus/si';
 
 const routes = [
     {
@@ -16,6 +18,9 @@ const routes = [
     },
     {
       path: '/signup',component: signup,
+    },
+    {
+      path: '/signin',component:signin,
     },
   ];
 const router = createRouter({
