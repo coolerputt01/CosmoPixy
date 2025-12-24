@@ -1,3 +1,5 @@
+import { currentTool } from "./drawTools";
+
 let canvas : HTMLCanvasElement;
 let ctx : CanvasRenderingContext2D;
 
@@ -79,6 +81,10 @@ function dragAndDrawLine(x1 : number,y1: number,x2 : number, y2: number){
 
 }
 
+function erasePixel(x: number,y: number){
+    ctx.clearRect(x * tileSize, y * tileSize, tileSize, tileSize);
+}
+
 function handleClick( e : MouseEvent | TouchEvent){
     let canvasRect = canvas.getBoundingClientRect();
     if(e instanceof MouseEvent){
@@ -93,13 +99,19 @@ function handleClick( e : MouseEvent | TouchEvent){
         let clientX = Math.floor((t!.clientX - canvasRect.left)/tileSize) * tileSize;
 		let clientY = Math.floor((t!.clientY - canvasRect.top)/tileSize) * tileSize;
 
-        
+
+        ctx.fillStyle = currentColor;
+        ctx.fillRect(clientX, clientY, tileSize, tileSize);
     }
 }
 
 function drawTile(x: number,y:number){
-    ctx.fillStyle = currentColor;
-    ctx.fillRect(x*tileSize,y*tileSize,tileSize,tileSize);
+    if(currentTool.value === "pencil"){
+        ctx.fillStyle = currentColor;
+        ctx.fillRect(x*tileSize,y*tileSize,tileSize,tileSize);
+    }else if(currentTool.value === "eraser"){
+        ctx.clearRect(x*tileSize,y*tileSize,tileSize,tileSize);
+    }
 }
 
 function loop(){
@@ -125,4 +137,4 @@ function lazyDownload(){
     link.download = `tile-${Math.round(Math.random() * 100)}.png`;
     link.click();
 }
-export { initPad ,loop ,setColor,lazyDownload};
+export { initPad ,loop ,setColor,erasePixel,lazyDownload};

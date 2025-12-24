@@ -1,9 +1,11 @@
 <script setup lang="ts">
     import { initPad, loop , setColor, lazyDownload } from '../utils/drawingPad';
     import { onMounted, ref, watch } from 'vue';
-    import { AiOutlineDownload } from 'vue-icons-plus/ai'
+    import { AiOutlineDownload } from 'vue-icons-plus/ai';
+    import { setTool } from '@/utils/drawTools';
 
     import tinycolor from "tinycolor2";
+    import ToolBar from "../components/ToolBar.vue";
 
     let palette : Array<string> = [];
     for(let x = 0;x < 15;x++){
@@ -15,6 +17,7 @@
 
     onMounted(() => {
         initPad();
+        setTool("pencil");
         setColor(currentColorRef.value);
         loop();
     });
@@ -30,6 +33,7 @@
         <section class="w-150 h-150 m-4">
             <canvas class="drawingPad border border-3 rounded"></canvas>
         </section>
+        <ToolBar />
         <nav class="p-4">
             <ul class="flex flex-wrap gap-4 w-64">
                 <li v-for="(color, index) in colors" :key="index">
