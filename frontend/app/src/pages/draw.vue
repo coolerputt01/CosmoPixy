@@ -31,7 +31,7 @@
 <template>
     <main class="flex">
         <section class="w-150 h-150 m-4">
-            <canvas class="drawingPad border border-3 rounded"></canvas>
+            <canvas class="drawingPad border border-2 rounded"></canvas>
         </section>
         <ToolBar />
         <nav class="p-4">

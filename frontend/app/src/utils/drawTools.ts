@@ -1,6 +1,6 @@
 import { ref, watch } from 'vue';
 
-export var tools = ["pencil","eraser"];
+export var tools = ["pencil","eraser","fill"];
 
 export const currentTool = ref(tools[0]);
 

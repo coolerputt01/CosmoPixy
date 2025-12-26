@@ -12,11 +12,10 @@ let lastTileY : number | null;
 
 function initPad(){
     canvas = document.querySelector('canvas') as HTMLCanvasElement;
-    ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+    ctx = canvas.getContext('2d',{ willReadFrequently: true }) as CanvasRenderingContext2D;
 
     canvas.width = 32 * tileSize;
     canvas.height = 32 * tileSize;
-    canvas.addEventListener("click",handleClick);
     canvas.addEventListener("mousedown",(e :MouseEvent)=>{
         isDrawingClickAndDrag = true;
 
@@ -46,6 +45,54 @@ function initPad(){
     canvas.addEventListener("mouseleave", () => {
         isDrawingClickAndDrag = false
     });
+}
+
+function getTileColor(x: number,y : number): string | null {
+    const data = ctx.getImageData(x * tileSize, y * tileSize, 1, 1).data;
+    return `rgba(${data[0]},${data[1]},${data[2]},${data[3]})`;
+}
+function fillTiles(x: number,y: number,fillColor : string){
+    const target = getTileColor(x, y);
+    if (!target) return;
+
+    ctx.fillStyle = fillColor;
+    const testCanvas = document.createElement("canvas");
+    const testCtx = testCanvas.getContext("2d",{ willReadFrequently: true })!;
+    testCtx.fillStyle = fillColor;
+    testCtx.fillRect(0, 0, 1, 1);
+    const newColor = testCtx.getImageData(0, 0, 1, 1).data;
+    const targetRGBA = target;
+
+    if (targetRGBA === `rgba(${newColor[0]},${newColor[1]},${newColor[2]},${newColor[3]})`) {
+        return;
+    }
+
+    const queue = [{ x, y }];
+    const visited = new Set<string>();
+
+    while (queue.length) {
+    const { x, y } = queue.shift()!;
+
+    const key = `${x},${y}`;
+    if (visited.has(key)) continue;
+    visited.add(key);
+
+    // Bounds check
+    if (x < 0 || y < 0 || x >= 32 || y >= 32) continue;
+
+    // If different color — stop spreading
+    if (getTileColor(x, y) !== target) continue;
+
+    // Fill this tile
+    ctx.fillStyle = fillColor;
+    ctx.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
+
+    // Spread outwards
+    queue.push({ x: x + 1, y });
+    queue.push({ x: x - 1, y });
+    queue.push({ x, y:y + 1 });
+    queue.push({ x, y:y - 1 });
+  }
 }
 
 function getTilePos(e: MouseEvent) {
@@ -110,7 +157,9 @@ function drawTile(x: number,y:number){
         ctx.fillStyle = currentColor;
         ctx.fillRect(x*tileSize,y*tileSize,tileSize,tileSize);
     }else if(currentTool.value === "eraser"){
-        ctx.clearRect(x*tileSize,y*tileSize,tileSize,tileSize);
+        erasePixel(x,y);
+    }else if (currentTool.value === "fill") {
+        fillTiles(x, y, currentColor);
     }
 }
 
