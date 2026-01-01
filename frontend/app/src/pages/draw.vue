@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { initPad, loop , setColor, lazyDownload } from '../utils/drawingPad';
+    import { initPad, loop , setColor, lazyDownload,brushSize } from '../utils/drawingPad';
     import { onMounted, ref, watch } from 'vue';
     import { AiOutlineDownload } from 'vue-icons-plus/ai';
     import { setTool } from '@/utils/drawTools';
@@ -44,6 +44,11 @@
                     </div>
                 </li>
             </ul>
+            <div class="mt-10 flex justify-center gap-3 items-center">
+                <label for="brush" class="py-3 font-bold">Brush Size : </label>
+                <input type="range" min="1" v-model="brushSize" max="16" id="brush" class="cursor-pointer">
+                <p class="brushSize">{{brushSize}}</p>
+            </div>
         </nav>
         <aside class="absolute bottom-20 right-15">
             <div class="cursor-pointer hover:opacity-75 border rounded-md w-25 flex flex-col justify-center p-3" @click="lazyDownload()">

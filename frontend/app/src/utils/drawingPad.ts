@@ -1,4 +1,5 @@
 import { currentTool } from "./drawTools";
+import { ref } from 'vue';
 
 let canvas : HTMLCanvasElement;
 let ctx : CanvasRenderingContext2D;
@@ -9,6 +10,7 @@ const tileSize : number =   16;
 let isDrawingClickAndDrag : boolean = false;
 let lastTileX: number | null;
 let lastTileY : number | null;
+const brushSize = ref<number>(1);
 
 function initPad(){
     canvas = document.querySelector('canvas') as HTMLCanvasElement;
@@ -77,17 +79,13 @@ function fillTiles(x: number,y: number,fillColor : string){
     if (visited.has(key)) continue;
     visited.add(key);
 
-    // Bounds check
     if (x < 0 || y < 0 || x >= 32 || y >= 32) continue;
 
-    // If different color — stop spreading
     if (getTileColor(x, y) !== target) continue;
 
-    // Fill this tile
     ctx.fillStyle = fillColor;
     ctx.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
 
-    // Spread outwards
     queue.push({ x: x + 1, y });
     queue.push({ x: x - 1, y });
     queue.push({ x, y:y + 1 });
@@ -153,12 +151,23 @@ function handleClick( e : MouseEvent | TouchEvent){
 }
 
 function drawTile(x: number,y:number){
-    if(currentTool.value === "pencil"){
-        ctx.fillStyle = currentColor;
-        ctx.fillRect(x*tileSize,y*tileSize,tileSize,tileSize);
-    }else if(currentTool.value === "eraser"){
-        erasePixel(x,y);
-    }else if (currentTool.value === "fill") {
+
+    for(let dy = Math.floor(-brushSize.value/2);dy < Math.floor(brushSize.value/2);dy++){
+        for(let dx = Math.floor(-brushSize.value/2);dx < Math.floor(brushSize.value/2);dx++){
+            let tileX = dx + x;
+            let tileY = dy + y;
+            if (tileX < 0 || tileY < 0 || tileX >= 32 || tileY >= 32) continue;
+
+            if(currentTool.value === "pencil"){
+                ctx.fillStyle = currentColor;
+                ctx.fillRect(tileX*tileSize,tileY*tileSize,tileSize,tileSize);
+            }else if(currentTool.value === "eraser"){
+                erasePixel(tileX,tileY);
+            }
+        }
+    }
+
+    if (currentTool.value === "fill") {
         fillTiles(x, y, currentColor);
     }
 }
@@ -186,4 +195,4 @@ function lazyDownload(){
     link.download = `tile-${Math.round(Math.random() * 100)}.png`;
     link.click();
 }
-export { initPad ,loop ,setColor,erasePixel,lazyDownload};
+export { initPad ,loop ,setColor,erasePixel,lazyDownload,brushSize};

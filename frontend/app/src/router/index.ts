@@ -4,6 +4,7 @@ import dashboard from '../pages/dashboard.vue';
 import draw from '../pages/draw.vue';
 import signup from '../pages/signup.vue';
 import signin from '../pages/signin.vue';
+import world from '@/pages/world.vue';
 import { SiGin } from 'vue-icons-plus/si';
 
 const routes = [
@@ -22,6 +23,9 @@ const routes = [
     {
       path: '/signin',component:signin,
     },
+    {
+      path: '/world-editor',component: world
+    }
   ];
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
