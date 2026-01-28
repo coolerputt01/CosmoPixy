@@ -1,7 +1,8 @@
 from flask import Flask, request, jsonify
 from flask_jwt_extended import JWTManager
-from .config import initConfigs,db
-from .auth.auth import auth_bp,bcrypt
+from config import initConfigs,db
+from auth.auth import auth_bp,bcrypt
+from drawing.index import drawing_bp
 
 app = Flask(__name__)
 
@@ -11,6 +12,7 @@ bcrypt.init_app(app)
 jwt = JWTManager(app);
 
 app.register_blueprint(auth_bp, url_prefix="/auth")
+app.register_blueprint(drawing_bp, url_prefix="/draw")
 @app.route('/',methods=["GET"])
 def home():
     return jsonify(

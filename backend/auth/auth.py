@@ -1,5 +1,5 @@
 from flask_jwt_extended import JWTManager,jwt_required,create_access_token,get_jwt_identity
-from ..config import db
+from config import db
 from .models import User
 from flask_bcrypt import Bcrypt
 from flask import Blueprint,request,jsonify

@@ -1,5 +1,5 @@
 from datetime import datetime, timezone
-from ..config import db
+from config import db
 
 class User(db.Model):
     __tablename__ = "users"
@@ -9,3 +9,4 @@ class User(db.Model):
     username = db.Column(db.String(128),unique=True, nullable=False)
     snap = db.Column(db.String(700),nullable=True)
     bio = db.Column(db.String(300),nullable=True)
+    palettes = db.relationship("ColorPalette", back_populates="user")

@@ -6,7 +6,7 @@ let ctx : CanvasRenderingContext2D;
 
 let currentColor : string;
 
-const tileSize : number =   16;
+const tileSize : number = 8;
 let isDrawingClickAndDrag : boolean = false;
 let lastTileX: number | null;
 let lastTileY : number | null;
@@ -16,8 +16,8 @@ function initPad(){
     canvas = document.querySelector('canvas') as HTMLCanvasElement;
     ctx = canvas.getContext('2d',{ willReadFrequently: true }) as CanvasRenderingContext2D;
 
-    canvas.width = 32 * tileSize;
-    canvas.height = 32 * tileSize;
+    canvas.width = 64 * tileSize;
+    canvas.height = 64 * tileSize;
     canvas.addEventListener("mousedown",(e :MouseEvent)=>{
         isDrawingClickAndDrag = true;
 
@@ -79,7 +79,7 @@ function fillTiles(x: number,y: number,fillColor : string){
     if (visited.has(key)) continue;
     visited.add(key);
 
-    if (x < 0 || y < 0 || x >= 32 || y >= 32) continue;
+    if (x < 0 || y < 0 || x >= canvas.width || y >= canvas.height) continue;
 
     if (getTileColor(x, y) !== target) continue;
 
@@ -151,12 +151,13 @@ function handleClick( e : MouseEvent | TouchEvent){
 }
 
 function drawTile(x: number,y:number){
+    // const half = Math.floor(brushSize.value / 2);
 
-    for(let dy = Math.floor(-brushSize.value/2);dy < Math.floor(brushSize.value/2);dy++){
-        for(let dx = Math.floor(-brushSize.value/2);dx < Math.floor(brushSize.value/2);dx++){
+    for(let dy = Math.floor(-brushSize.value/2);dy <= Math.floor(brushSize.value/2);dy++){
+        for(let dx = Math.floor(-brushSize.value/2);dx <= Math.floor(brushSize.value/2);dx++){
             let tileX = dx + x;
             let tileY = dy + y;
-            if (tileX < 0 || tileY < 0 || tileX >= 32 || tileY >= 32) continue;
+            if (tileX < 0 || tileY < 0 || tileX >= canvas.width || tileY >= canvas.height) continue;
 
             if(currentTool.value === "pencil"){
                 ctx.fillStyle = currentColor;
